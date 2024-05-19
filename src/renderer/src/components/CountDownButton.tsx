@@ -1,22 +1,27 @@
 import Button from '@mui/material/Button'
+import { useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { countWinAtom, countLoseAtom, countTieAtom } from '../atom'
 
-const sendMain = (str: 'w' | 'l' | 't'): void => {
-  window.electron.ipcRenderer.send('downCount', str)
-}
+const CountDownButton = ({ result }: { result: 'w' | 't' | 'l' }): JSX.Element => {
+  const [countWin, setCountWin] = useAtom(countWinAtom)
+  const [countTie, setCountTie] = useAtom(countTieAtom)
+  const [countLose, setCountLose] = useAtom(countLoseAtom)
 
-const CountDownButton = (result: { result: 'w' | 'l' | 't' }): JSX.Element => {
-  const [_countWin, setCountWin] = useAtom(countWinAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [_countLose, setCountLose] = useAtom(countLoseAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [_countTie, setCountTie] = useAtom(countTieAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
+  useEffect(() => {
+    window.electron.ipcRenderer.send('rewriteFile', countWin, countTie, countLose)
+  }, [countWin, countTie, countLose])
+
+  const sendMain = (str: 'w' | 't' | 'l'): void => {
+    window.electron.ipcRenderer.send('downCount', str)
+  }
 
   const label = '-'
 
   const handleClick = (): void => {
     let shouldSendMain = false
 
-    switch (result.result) {
+    switch (result) {
       case 'w':
         setCountWin((prevCount: number) => {
           if (prevCount > 0) {
@@ -49,7 +54,7 @@ const CountDownButton = (result: { result: 'w' | 'l' | 't' }): JSX.Element => {
     }
 
     if (shouldSendMain) {
-      sendMain(result.result)
+      sendMain(result)
     }
   }
 

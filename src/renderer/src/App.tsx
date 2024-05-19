@@ -11,8 +11,6 @@ function App(): JSX.Element {
   // displayTieAtom のアトムから showTie の状態を取得
   const [showTie] = useAtom(displayTieAtom)
 
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <TieDisplaySwitch />
@@ -38,19 +36,6 @@ function App(): JSX.Element {
 
       <CountDisplay />
       <CountResetButton />
-
-      {/* <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            ドキュメント
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            IPC を送信する
-          </a>
-        </div>
-      </div> */}
     </Box>
   )
 }

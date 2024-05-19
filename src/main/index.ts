@@ -2,19 +2,23 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import GameResultDB from './gameResultDB'
+import gameResultDB from './gameResultDB'
+import gameResultFile from './gameResultFile'
 import SystemLogger from './systemLogger'
 
-let gameDB: GameResultDB | null = null
+let resultDB: gameResultDB | null = null
 let sysLog: SystemLogger | null = null
+let resultFile: gameResultFile | null = null
 
 function createWindow(): void {
   // DBの初期化
-  gameDB = new GameResultDB()
-  gameDB.initDB()
+  resultDB = new gameResultDB()
+  resultDB.initDB()
   // シスログの初期化
   sysLog = new SystemLogger()
   sysLog.init()
+  // 結果ファイルの初期化
+  resultFile = new gameResultFile()
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -65,18 +69,24 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   // カウントアップ通知が来たときの挙動
-  ipcMain.on('upCount', (_e, param1) => {
-    sysLog?.write(`upCount(${param1})の呼び出し`)
-    gameDB?.insert(param1)
+  ipcMain.on('upCount', (_e, state) => {
+    sysLog?.write(`upCount(${state})の呼び出し`)
+    resultDB?.insert(state)
   })
 
   // カウントダウン通知が来たときの挙動
-  ipcMain.on('downCount', (_e, param1) => {
-    sysLog?.write(`downCount(${param1})の呼び出し`)
-    gameDB?.deleteLatest(param1)
+  ipcMain.on('downCount', (_e, state) => {
+    sysLog?.write(`downCount(${state})の呼び出し`)
+    resultDB?.deleteLatest(state)
   })
 
-  // createWindow 関数を呼び出し、gameDB インスタンスを作成
+  // テキスト更新通知が来たときの挙動
+  ipcMain.on('rewriteFile', (_e, w, t, l) => {
+    sysLog?.write(`${w}, ${t}, ${l}でファイル更新`)
+    resultFile?.write(w, t, l)
+  })
+
+  // createWindow 関数を呼び出し、resultDB インスタンスを作成
   createWindow()
 
   app.on('activate', function () {
@@ -87,7 +97,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  gameDB?.close()
+  resultDB?.close()
   sysLog?.close()
 
   if (process.platform !== 'darwin') {

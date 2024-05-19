@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose()
 const fs = require('fs')
 const path = require('path')
 
-class GameResultDB {
+class gameResultDB {
   dbFilePath: string
   // eslint-disable-next-line
   db: any
@@ -95,4 +95,4 @@ class GameResultDB {
   }
 }
 
-export default GameResultDB
+export default gameResultDB

@@ -1,28 +1,31 @@
 import Button from '@mui/material/Button'
 import { useAtom } from 'jotai'
+import { useEffect } from 'react'
 import { countWinAtom, countLoseAtom, countTieAtom } from '../atom'
 
-const sendMain = (str: 'w' | 'l' | 't'): void => {
-  window.electron.ipcRenderer.send('upCount', str)
-}
+const CountUpButton = (result: { result: 'w' | 't' | 'l' }): JSX.Element => {
+  const [countWin, setCountWin] = useAtom(countWinAtom)
+  const [countTie, setCountTie] = useAtom(countTieAtom)
+  const [countLose, setCountLose] = useAtom(countLoseAtom)
 
-const CountUpButton = (result: { result: 'w' | 'l' | 't' }): JSX.Element => {
-  const [_countWin, setCountWin] = useAtom(countWinAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [_countLose, setCountLose] = useAtom(countLoseAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [_countTie, setCountTie] = useAtom(countTieAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
+  const sendMain = (str: 'w' | 't' | 'l'): void => {
+    window.electron.ipcRenderer.send('upCount', str)
+  }
 
-  const label = '+'
+  useEffect(() => {
+    window.electron.ipcRenderer.send('rewriteFile', countWin, countTie, countLose)
+  }, [countWin, countTie, countLose])
 
   const handleClick = (): void => {
     switch (result.result) {
       case 'w':
         setCountWin((prevCount: number) => prevCount + 1)
         break
-      case 'l':
-        setCountLose((prevCount: number) => prevCount + 1)
-        break
       case 't':
         setCountTie((prevCount: number) => prevCount + 1)
+        break
+      case 'l':
+        setCountLose((prevCount: number) => prevCount + 1)
         break
       default:
         break
@@ -32,7 +35,7 @@ const CountUpButton = (result: { result: 'w' | 'l' | 't' }): JSX.Element => {
 
   return (
     <Button sx={{ fontSize: '2.5rem', color: 'dodgerblue' }} onClick={handleClick}>
-      {label}
+      +
     </Button>
   )
 }
