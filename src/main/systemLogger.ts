@@ -1,11 +1,17 @@
+import { app } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
 
 class SystemLogger {
+  logDir: string
   private logStream: fs.WriteStream | null = null
   private logFilePath: string | null = null
 
-  constructor(private logDir: string = path.join(__dirname, '../../../syslog')) {}
+  constructor() {
+    this.logDir = app.isPackaged
+      ? path.join(__dirname, '../../../../syslog')
+      : path.join(__dirname, '../../syslog')
+  }
 
   // 初期化を行う関数
   public init(): void {

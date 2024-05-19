@@ -1,3 +1,4 @@
+import { app } from 'electron'
 const sqlite3 = require('sqlite3').verbose()
 const fs = require('fs')
 const path = require('path')
@@ -8,7 +9,9 @@ class gameResultDB {
   db: any
 
   constructor() {
-    this.dbFilePath = path.join(__dirname, '../../result.db')
+    this.dbFilePath = app.isPackaged
+      ? path.join(__dirname, '../../../../result.db')
+      : path.join(__dirname, '../../result.db')
 
     // 一つ上の階層にresult.dbファイルが存在しない場合、ファイルを作成する
     if (!fs.existsSync(this.dbFilePath)) {

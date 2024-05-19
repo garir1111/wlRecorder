@@ -14,17 +14,19 @@ function createWindow(): void {
   // DBの初期化
   resultDB = new gameResultDB()
   resultDB.initDB()
+
   // シスログの初期化
   sysLog = new SystemLogger()
   sysLog.init()
+
   // 結果ファイルの初期化
   resultFile = new gameResultFile()
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 600,
+    width: 550,
     height: 500,
-    minWidth: 600,
+    minWidth: 550,
     minHeight: 500,
     show: false,
     autoHideMenuBar: true,

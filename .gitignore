@@ -1,5 +1,6 @@
 node_modules
 dist
+syslog
 out
 result
 .DS_Store

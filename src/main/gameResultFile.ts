@@ -1,3 +1,4 @@
+import { app } from 'electron'
 const fs = require('fs')
 const path = require('path')
 
@@ -9,7 +10,9 @@ class gameResultFile {
   filePathWithoutT: string
 
   constructor() {
-    this.dirPath = path.join(__dirname, '../../result')
+    this.dirPath = app.isPackaged
+      ? path.join(__dirname, '../../../../result')
+      : path.join(__dirname, '../../result')
     this.fileNameWithT = 'w-t-l.txt'
     this.fileNameWithoutT = 'w-l.txt'
 
