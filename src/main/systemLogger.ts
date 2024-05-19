@@ -5,14 +5,13 @@ class SystemLogger {
   private logStream: fs.WriteStream | null = null
   private logFilePath: string | null = null
 
-  constructor(private logDir: string = path.join(__dirname, '../../syslog')) {}
+  constructor(private logDir: string = path.join(__dirname, '../../../syslog')) {}
 
   // 初期化を行う関数
   public init(): void {
     try {
       // ディレクトリが存在するか確認し、なければ作成する
       if (!fs.existsSync(this.logDir)) {
-        console.log('Creating log directory:', this.logDir)
         fs.mkdirSync(this.logDir, { recursive: true })
       }
 
@@ -24,9 +23,12 @@ class SystemLogger {
 
       // WriteStreamを作成
       this.logStream = fs.createWriteStream(this.logFilePath, { flags: 'a' })
+
+      // デバッグ情報の出力
       console.log('Log file created at:', this.logFilePath)
     } catch (error) {
       console.error('Failed to initialize log:', error)
+      throw error // エラーを再スローして上位で処理する
     }
   }
 
