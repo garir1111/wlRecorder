@@ -4,8 +4,7 @@ import { useAtom } from 'jotai'
 import { displayTieAtom } from '../atom'
 
 const TieDisplaySwitch = (): JSX.Element => {
-  const [view, setView] = useAtom(displayTieAtom) // eslint-disable-line @typescript-eslint/no-unused-vars
-
+  const [view, setView] = useAtom(displayTieAtom)
   const handleToggle = (): void => {
     setView((prev) => !prev)
   }
